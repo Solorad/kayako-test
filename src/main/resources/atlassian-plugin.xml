@@ -9,16 +9,53 @@
 
     <!-- add our i18n resource -->
     <resource type="i18n" name="i18n" location="kayako-test"/>
-    
-    <!-- add our web resources -->
-    <web-resource key="kayako-test-resources" name="kayako-test Web Resources">
-        <dependency>com.atlassian.auiplugin:ajs</dependency>
-        
-        <resource type="download" name="kayako-test.css" location="/css/kayako-test.css"/>
-        <resource type="download" name="kayako-test.js" location="/js/kayako-test.js"/>
-        <resource type="download" name="images/" location="/images"/>
 
-        <context>kayako-test</context>
+    <rest name="Admin Page Resource" i18n-name-key="admin-page-resource.name"
+          key="admin-page-resource" path="/luxproject-admin" version="1.0">
+        <description key="admin-page-resource.description">Rest endpoint for work with REST table</description>
+        <package>com.morenkov.rest</package>
+    </rest>
+
+    <!-- add our web resources -->
+    <web-resource key="kayako-admin-resources" name="kayako-test Web Resources">
+        <dependency>com.atlassian.auiplugin:ajs</dependency>
+        <dependency>com.atlassian.auiplugin:aui-experimental-restfultable</dependency>
+
+        <resource type="i18n" name="i18n-configuration" location="configuration"/>
+
+        <transformation extension="js">
+            <transformer key="jsI18n"/>
+        </transformation>
+
+        <resource type="download" name="admin-page.js" location="/js/admin-page.js"/>
+        <resource type="download" name="admin-page.css" location="/css/admin-page.css"/>
+        <context>admin-page</context>
     </web-resource>
-    
+
+    <webwork1 key="admin.IntegrationProperties" name="Kayako Plugin Properties" class="java.lang.Object">
+        <actions>
+            <action name="com.lmorenkov.admin.AdminAction" alias="AdminAction" roles-required="admin">
+                <view name="success">/templates/admin-page.vm</view>
+            </action>
+        </actions>
+    </webwork1>
+
+    <web-section name="Administration section"
+                 i18n-name-key="kayako.administration-section.name" key="kayako.administration-section"
+                 location="admin_plugins_menu" weight="1000">
+        <description key="kayako.administration-section.description">
+            Kayako Administration
+        </description>
+        <label key="kayako.administration-section.label"/>
+        <tooltip>Kayako Administration</tooltip>
+    </web-section>
+
+    <web-item name="Administration Item" i18n-name-key="kayako.web-item.name"
+              key="kayako.web-item" section="admin_plugins_menu/kayako.administration-section"
+              weight="600">
+        <description key="kayako.web-item.description">Administration Section Setup</description>
+        <label key="kayako.web-item.label"/>
+        <link linkId="porperties-admin-link">/secure/IntegrationAdmin.jspa</link>
+    </web-item>
+
 </atlassian-plugin>

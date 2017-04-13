@@ -1,0 +1,139 @@
+package com.morenkov.rest;
+
+import com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils;
+import com.atlassian.plugin.spring.scanner.annotation.imports.ComponentImport;
+import com.atlassian.sal.api.message.I18nResolver;
+import com.google.common.collect.ImmutableMap;
+import com.morenkov.dto.AdminConfig;
+import com.morenkov.service.AdminConfigService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.DELETE;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.PUT;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.List;
+
+import static com.atlassian.gzipfilter.org.apache.commons.lang.StringUtils.isEmpty;
+
+
+@Path("/config")
+@Consumes({MediaType.APPLICATION_JSON})
+@Produces({MediaType.APPLICATION_JSON})
+@Component
+public class AdminPageResource {
+
+    private static final Logger LOG = LoggerFactory.getLogger(AdminPageResource.class);
+
+    private final AdminConfigService adminConfigService;
+    private final I18nResolver i18n;
+
+    @Autowired
+    public AdminPageResource(AdminConfigService adminConfigService
+            , @ComponentImport I18nResolver i18n) {
+        this.adminConfigService = adminConfigService;
+        this.i18n = i18n;
+    }
+
+    @GET
+    public Response getAllConfigs() {
+        LOG.debug("getAllConfigs");
+        List<AdminConfig> configs = adminConfigService.getAllPropertyConfigs();
+        return Response.ok(configs).build();
+    }
+
+    @POST
+    public Response createPropertyConfig(final AdminConfig config) {
+        LOG.debug("createPropertyConfig {}", config);
+        String validations = validateInput(config);
+        if (validations != null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(ImmutableMap.of("errors", validations)).build();
+        }
+        AdminConfig result = adminConfigService.setPropertyConfig(config);
+        return Response.ok(result).build();
+    }
+
+    @PUT
+    @Path("{id}")
+    public Response updatePropertyConfig(@PathParam("id") final String id, final AdminConfig config) {
+        LOG.debug("updatePropertyConfig id = {}, config = {}", id, config);
+        String validations = validateInputForEdit(config);
+        if (validations != null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity(ImmutableMap.of("errors", validations)).build();
+        }
+        AdminConfig result = adminConfigService.setPropertyConfig(config);
+        return Response.ok(result).build();
+    }
+
+    @DELETE
+    @Path("{id}")
+    public Response delete(@PathParam("id") final Integer id) {
+        LOG.debug("delete entity with id = {}", id);
+        if (adminConfigService.removePropertyConfig(id)) {
+            return Response.status(Response.Status.OK).build();
+        }
+        return Response.status(Response.Status.BAD_REQUEST).entity(ImmutableMap.of("errors", "NOT_EXISTS")).build();
+    }
+
+    private String validateInput(AdminConfig config) {
+        if (config == null) {
+            return i18n.getText("morenkov.admin-page.values-empty");
+        }
+        if (isEmpty(config.getPropertyKey())) {
+            return i18n.getText("morenkov.admin-page.property-key-empty");
+        }
+        if (isEmpty(config.getDisplayName())) {
+            return i18n.getText("morenkov.admin-page.admin.display-name-empty");
+        }
+        if (config.getPropertyKey().indexOf(' ') != -1) {
+            return i18n.getText("morenkov.admin-page.key-with-space");
+        }
+
+
+        AdminConfig propertyConfigByKey = adminConfigService.getPropertyConfigByKey(config.getPropertyKey());
+        if (propertyConfigByKey != null) {
+            LOG.error("The entry with such key already exists");
+            return i18n.getText("morenkov.admin-page.key-exists");
+        }
+
+        return null;
+    }
+
+    private String validateInputForEdit(AdminConfig config) {
+        if (config == null || config.getId() == null) {
+            LOG.error("Invalid config {}", config);
+            return i18n.getText("morenkov.admin-page.values-empty");
+        }
+
+        if (config.getPropertyKey() != null) {
+            if (config.getPropertyKey().indexOf(' ') != -1) {
+                return i18n.getText("morenkov.admin-page.key-with-space");
+            }
+            if (isEmpty(config.getPropertyKey())) {
+                return i18n.getText("morenkov.admin-page.property-key-empty");
+            }
+
+
+            AdminConfig propertyConfigByKey =
+                    adminConfigService.getPropertyConfigByKey(config.getPropertyKey());
+            if (propertyConfigByKey != null) {
+                LOG.error("The entry with such key already exists");
+                return i18n.getText("morenkov.admin-page.key-exists");
+            }
+        }
+        if ("".equals(config.getDisplayName())) {
+            LOG.error("The entry with such key already exists");
+            return i18n.getText("morenkov.admin-page.admin.display-name-empty");
+        }
+        return null;
+    }
+}

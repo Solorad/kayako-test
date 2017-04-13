@@ -1,0 +1,21 @@
+<html>
+<head>
+    $webResourceManager.requireResourcesForContext(
+        "com.luxoft.luxproject.integration.jira-integration:project-admin-resources")
+    <meta name="decorator" content="atl.admin">
+    <meta name="admin.active.section" content="admin_plugins_menu/jira-integration.integration-section"/>
+    <title>JIRA Integration Admin</title>
+</head>
+<body class="page-type-admin">
+<div class="aui-page-header">
+    <div class="aui-page-header-inner">
+        <div class="aui-page-header-main">
+            <h1>Kayako Integration Properties</h1>
+        </div>
+    </div>
+</div>
+<div id="property-validation-messages"></div>
+
+<table id="property-config-table"></table>
+</body>
+</html>
