@@ -1,0 +1,103 @@
+$webResourceManager.requireResource(
+    "com.sentinel.jira.plugin.jira-create-tasks-on-transition-plugin:function-edit-resources")
+
+<input type="hidden" id="inheritedCustomFields" value="$!inheritedCustomFields"/>
+<input type="hidden" id="curIssueLinkType" value="$!issueLinkType"/>
+<input type="hidden" id="curCmitIssueType" value="$!cmitIssueType"/>
+<table id="function-field-table">
+    <tr>
+        <td class="field-label primary_cell"><label for="summary">Summary<span class="aui-icon icon-required inherit">required</span></label></td>
+        <td class="primary_cell">
+            <input type="text" id="summary" name="summary" value="$!summary" class="text long-field"/>
+            <span id="summary-help" class="aui-icon aui-icon-small aui-iconfont-help">help</span>
+        </td>
+    </tr>
+    <tr>
+        <td class="field-label primary_cell"><label for="cmitIssueType">Issue type<span class="aui-icon icon-required inherit">required</span></label></td>
+        <td class="primary_cell">
+            <select id="cmitIssueType" name="cmitIssueType" class="select"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="field-label primary_cell"><label for="issueLinkType">Link type</label></td>
+        <td class="primary_cell">
+            <select id="issueLinkType" name="issueLinkType" class="select"/>
+        </td>
+    </tr>
+    <tr>
+        <td class="field-label primary_cell"><label for="reporter">Reporter</label></td>
+        <td class="primary_cell">
+            <select id="reporter" class="select" name="reporter" #if($reporter) value="$reporter" #else value="reporter"  #end>
+                <option value="reporter" #if($reporter=="reporter")selected="selected"#end>Parent reporter</option>
+                <option value="assignee" #if($reporter=="assignee")selected="selected"#end>Parent assignee</option>
+            </select>
+        </td>
+    </tr>
+    <tr class="separated-field-row">
+        <td class="field-label primary_cell"><label>Conditional execution</label></td>
+        <td class="primary_cell">
+            <input name="enableCondition" id="enableCondition" type="checkbox" #if($enableCondition == true)
+                   checked="checked" #end class="checkbox"/>
+            <label for="enableCondition">Enable</label>
+        </td>
+    </tr>
+    <tr id="condition-description">
+        <td>&nbsp;</td>
+        <td>
+            <input name="condition" id="condition" type="text" class="text"
+                #if($enableCondition != true) disabled="disabled" #end
+                #if($condition) value="$condition" #end
+                   placeholder="%customfield_name%"
+            />
+            <span> = </span>
+            <input name="conditionValue" id="conditionValue" type="text" class="text"
+                #if($enableCondition != true) disabled="disabled" #end
+                #if($conditionValue) value="$conditionValue" #end
+                   placeholder="Value"
+            />
+        </td>
+    </tr>
+    <tr>
+        <td class="field-label primary_cell"><label for="isUnassigned">Assignee</label></td>
+        <td class="primary_cell">
+            <select id="assignee" class="select" name="assignee" #if($assignee) value="$assignee" #end>
+                <option value="none" #if($assignee=="none")selected="selected"#end>Unassigned</option>
+                <option value="onScreen" #if($assignee=="onScreen")selected="selected"#end>Select on 'Create tasks' screen</option>
+            </select>
+        </td>
+    </tr>
+
+    <tr class="separated-field-row">
+        <td class="field-label primary_cell"><label>Inherited standard fields</label></td>
+        <td class="primary_cell">
+            <div style="max-height:300px" id="standard_fields">
+                #foreach ($field in $standardFields)
+                    <div>
+                        <input id="Id$field" type="checkbox" name="inheritedStandardFields" value="$field"
+                                   class="checkbox"
+                                   #if($inheritedStandardFields.contains($field.toString()))checked="checked"#end/>
+                        <label for="Id$field">$field.name</label>
+                    </div>
+                #end
+            </div>
+            <button id="select-all-standard-fields" class="aui-button">Select all</button>
+            <button id="deselect-all-standard-fields" class="aui-button">Deselect all</button>
+        </td>
+    </tr>
+    <tr class="separated-field-row second">
+        <td class="field-label primary_cell"><label>Inherited custom fields</label></td>
+        <td class="primary_cell">
+            <div style="max-height:250px" id="inheritedCfContainer">
+            </div>
+            <button id="select-all-custom-fields" class="aui-button">Select all</button>
+            <button id="deselect-all-custom-fields" class="aui-button">Deselect all</button>
+        </td>
+    </tr>
+    <tr>
+        <td>&nbsp;</td>
+        <td class="right-aligned primary_cell">
+            Please refer to the <a href="https://luxoft.atlassian.net/wiki/x/FYAH" target="_blank">documentation</a> for details.
+        </td>
+    </tr>
+</table>
+

@@ -1,0 +1,19 @@
+<b>Create Task</b><br>
+<b>Summary:</b> $summary<br>
+<b>Issue Type:</b> $issueTypeName<br>
+<b>Reporter:</b> $reporter<br>
+<b>Link Type:</b>
+#if($issueLinkTypeName)
+    $issueLinkTypeName
+#else
+    $i18n.getText("smit.config.none")
+#end
+<br>
+#if($assignee == "none")
+    New issues are created <b>unassigned</b>!<br/>
+#end
+#if($enableCondition == true && $condition)
+    <b>Condition:</b> '$condition' = '$conditionValue'<br/>
+#end
+<b>Inherited Standard Fields:</b> $inheritedStandardFields<br>
+<b>Inherited Custom Fields:</b> $customFieldNames<br>

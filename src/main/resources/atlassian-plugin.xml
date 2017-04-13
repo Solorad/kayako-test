@@ -58,4 +58,12 @@
         <link linkId="porperties-admin-link">/secure/IntegrationAdmin.jspa</link>
     </web-item>
 
+    <workflow-function key="CreateTasks-function" name="Create Issue / Sub-Task" class="com.sentinel.jira.plugin.workflow.WorkflowWithInputFunctionFactoryImpl">
+        <description>The function creates an issue or a sub-task which could be configured using the original issue ("Create Issue on Transition" add-on by Luxoft)</description>
+        <function-class>com.sentinel.jira.plugin.workflow.CreateTasksFunction</function-class>
+        <resource type="velocity" name="view" location="templates/function-view.vm"/>
+        <resource type="velocity" name="input-parameters" location="templates/function-edit.vm"/>
+        <resource type="velocity" name="edit-parameters" location="templates/function-edit.vm"/>
+    </workflow-function>
+
 </atlassian-plugin>
