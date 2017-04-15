@@ -1,0 +1,37 @@
+<html>
+<head>
+    $webResourceManager.requireResourcesForContext("com.morenkov.kayako-test:kayako-admin-resources")
+  <meta name="decorator" content="atl.admin">
+  <meta name="admin.active.section" content="admin_plugins_menu/kayako.administration-section"/>
+  <title>Kayako Admin</title>
+</head>
+<body class="page-type-admin">
+<div class="aui-page-header">
+  <div class="aui-page-header-inner">
+    <div class="aui-page-header-main">
+      <h1>Kayako Integration Properties</h1>
+    </div>
+  </div>
+</div>
+<div id="property-validation-messages"></div>
+
+<form class="aui"  action="#" method="post" id="kayako-admin-form">
+  <div class="field-group">
+    <label for="apiUrl">API URL</label>
+    <input class="text medium-field" id="apiUrl" name="apiUrl" #if($apiUrl) value="$apiUrl" #end/>
+  </div>
+  <div class="field-group">
+    <label for="apiKey">API Key</label>
+    <input class="text medium-field" id="apiKey" name="apiKey" #if($apiKey) value="$apiKey" #end/>
+  </div>
+  <div class="field-group">
+    <label for="apiSecret">API Secret</label>
+    <input class="text medium-field" id="\" name="apiSecret" #if($apiSecret) value="$apiSecret" #end/>
+  </div>
+
+  <div class="field-group">
+    <input class="aui-button aui-button-primary" name="Save" type="submit" value="Save"/>
+  </div>
+</form>
+</body>
+</html>
